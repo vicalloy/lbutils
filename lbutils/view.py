@@ -16,6 +16,15 @@ def request_get_next(request, default_next):
     return next
 
 
+def get_client_ip(request):
+    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
+    if x_forwarded_for:
+        ip = x_forwarded_for.split(',')[0]
+    else:
+        ip = request.META.get('REMOTE_ADDR')
+    return ip
+
+
 def save_formset(formset, ext_vals):
     formset.save(commit=False)
     for f in formset.saved_forms:
@@ -26,4 +35,4 @@ def save_formset(formset, ext_vals):
 
 
 def render_json(data, ensure_ascii=False):
-    return HttpResponse(json.dumps(data, ensure_ascii=False), mimetype="application/json")
+    return HttpResponse(json.dumps(data), mimetype="application/json")
