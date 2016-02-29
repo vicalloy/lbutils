@@ -4,6 +4,28 @@ from __future__ import unicode_literals
 import datetime
 from django.db.models import Q, F
 from django.db.models import Sum
+from django.db.models import Max
+
+
+__all__ = (
+    'get_or_none',
+    'get_pk_or_none',
+    'get_sum',
+    'get_max',
+    'do_filter',
+)
+
+
+def get_or_none(model_class, *args, **kwargs):
+    try:
+        return model_class.objects.get(*args, **kwargs)
+    except Exception:
+        return None
+
+
+def get_pk_or_none(model_class, *args, **kwargs):
+    obj = get_or_none(model_class, *args, **kwargs)
+    return obj.pk if obj else None
 
 
 def get_sum(qs, field):
@@ -12,10 +34,18 @@ def get_sum(qs, field):
     return qty if qty else 0
 
 
-def do_filter(qs, qdata, quick_query_fields=[]):
+def get_max(qs, field):
+    max_field = '%s__max' % field
+    num = qs.aggregate(Max(field))[max_field]
+    return num if num else 0
+
+
+def do_filter(qs, qdata, quick_query_fields=[], int_quick_query_fields=[]):
     try:
         qs = qs.filter(
-            gen_quick_query_params(qdata.get('q_quick_search_kw'), quick_query_fields)
+            gen_quick_query_params(
+                qdata.get('q_quick_search_kw'), quick_query_fields,
+                int_quick_query_fields)
         )
         q, kw_query_params = gen_query_params(qdata)
         qs = qs.filter(q, **kw_query_params)
@@ -25,13 +55,17 @@ def do_filter(qs, qdata, quick_query_fields=[]):
     return qs
 
 
-def gen_quick_query_params(value, fields):
+def gen_quick_query_params(value, fields, int_fields):
     q = Q()
     if not value:
         return q
     for field in fields:
         d = {"%s__icontains" % field: value}
         q = q | Q(**d)
+    if value.isdigit():
+        for f in int_fields:
+            d = {f: value}
+            q = q | Q(**d)
     return q
 
 
@@ -40,6 +74,7 @@ def gen_query_params(qdata):
     kw_query_params = {}
     for k, v in qdata.items():
         if k.startswith('q__'):
+            k = k[3:]
             if not isinstance(v, (str, unicode)):
                 if v is not None:
                     kw_query_params[k] = v
@@ -47,7 +82,6 @@ def gen_query_params(qdata):
             if v == '':
                 continue
             v = v.replace('，', ',')
-            k = k[3:]
             if k.startswith('d__'):
                 k = k[3:]
                 if v:

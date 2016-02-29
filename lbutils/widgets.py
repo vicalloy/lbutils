@@ -9,21 +9,22 @@ from django.forms.util import flatatt
 from django.utils.safestring import mark_safe
 from django.utils.datastructures import MultiValueDict, MergeDict
 from django.forms import Select
-from django.forms.formsets import BaseFormSet
-from django.forms.models import BaseModelFormSet
-from django.forms.models import BaseInlineFormSet
+from django.forms import MultipleHiddenInput, HiddenInput
+from django.forms.widgets import Widget, Textarea, CheckboxInput
 
-
-def forms_is_valid(forms):
-    is_valid = True
-    for form in forms:
-        is_valid = is_valid and form.is_valid()
-    return is_valid
+__all__ = (
+    'JustSelectedSelect',
+    'JustSelectedSelectMultiple',
+    'TextWidget',
+)
 
 
 class JustSelectedSelect(Select):
+    """ only generate selected option """
 
     def render_options(self, choices, selected_choices):
+        # Normalize to strings.
+        # FIXME selected value couldn't be ‘’ None
         selected_choices = set([force_unicode(v) for v in selected_choices if v])
         output = []
         schoices = self.choices
@@ -45,8 +46,19 @@ class JustSelectedSelect(Select):
                 output.append(self.render_option(selected_choices, option_value, option_label))
         return u'\n'.join(output)
 
+    def render_readonly(self, name, value, attrs):
+        schoices = self.choices
+        if isinstance(schoices, ModelChoiceIterator):
+            schoices.queryset = schoices.queryset.filter(pk=value)
+        for o in schoices:
+            if "%s" % o[0] == "%s" % value:
+                return o[1]
+        return ""
+
 
 class JustSelectedSelectMultiple(JustSelectedSelect):
+    """ only generate selected option """
+
     def render(self, name, value, attrs=None, choices=()):
         if value is None:
             value = []
@@ -75,40 +87,45 @@ class JustSelectedSelectMultiple(JustSelectedSelect):
         return data_set != initial_set
 
 
-class LBBaseFormSet(BaseFormSet):
-
-    def __init__(self, *args, **kwargs):
-        self.ext_params = {}
-        if 'ext_data' in kwargs:
-            self.ext_params['ext_data'] = kwargs.pop('ext_data')
-        super(LBBaseFormSet, self).__init__(*args, **kwargs)
-
-    def _construct_form(self, i, **kwargs):
-        kwargs.update(self.ext_params)
-        return super(LBBaseFormSet, self)._construct_form(i, **kwargs)
+def render_hidden(name, value):
+    """ render as hidden widget """
+    if isinstance(value, list):
+        return MultipleHiddenInput().render(name, value)
+    return HiddenInput().render(name, value)
 
 
-class LBBaseModelFormSet(BaseModelFormSet):
+class TextWidget(Widget):
+    """ render as text """
 
-    def __init__(self, *args, **kwargs):
-        self.ext_params = {}
-        if 'ext_data' in kwargs:
-            self.ext_params['ext_data'] = kwargs.pop('ext_data')
-        super(LBBaseModelFormSet, self).__init__(*args, **kwargs)
+    def __init__(self, attrs=None, src_widget=None):
+        super(TextWidget, self).__init__(attrs)
+        self.src_widget = src_widget
 
-    def _construct_form(self, i, **kwargs):
-        kwargs.update(self.ext_params)
-        return super(LBBaseModelFormSet, self)._construct_form(i, **kwargs)
+    def gen_output(self, descn, value, name):
+        return "<span class='text-value'>%s</span> %s" % (descn, render_hidden(name, value))
 
+    def value_from_datadict(self, data, files, name):
+        return self.src_widget.value_from_datadict(data, files, name)
 
-class LBBaseInlineFormSet(BaseInlineFormSet):
-
-    def __init__(self, *args, **kwargs):
-        self.ext_params = {}
-        if 'ext_data' in kwargs:
-            self.ext_params['ext_data'] = kwargs.pop('ext_data')
-        super(LBBaseInlineFormSet, self).__init__(*args, **kwargs)
-
-    def _construct_form(self, i, **kwargs):
-        kwargs.update(self.ext_params)
-        return super(LBBaseInlineFormSet, self)._construct_form(i, **kwargs)
+    def render(self, name, value, attrs=None):
+        func_render_readonly = getattr(self.src_widget, 'render_readonly', None)
+        if func_render_readonly:
+            descn = func_render_readonly(name, value, attrs)
+            return self.gen_output(descn, value, name)
+        if isinstance(self.src_widget, Select):
+            if isinstance(value, list):
+                values = ["%s" % e for e in value]
+            else:
+                values = ["%s" % value]
+            descns = []
+            for v, descn in self.src_widget.choices:
+                if "%s" % v in values:
+                    descns.append(descn)
+            return self.gen_output(','.join(descns), value, name)
+        if isinstance(self.src_widget, CheckboxInput):
+            descn = u'√' if value else u'×'
+            return self.gen_output(descn, value, name)
+        descn = '' if value is None else '%s' % value
+        if isinstance(self.src_widget, Textarea):  # TODO 避免pre的问题，做的临时处理
+            descn = value
+        return self.gen_output(descn, value, name)
