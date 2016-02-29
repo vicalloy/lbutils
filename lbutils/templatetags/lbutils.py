@@ -38,3 +38,16 @@ def display_array(objs):
     if not objs:
         return ''
     return ', '.join(['%s' % e for e in objs])
+
+
+@register.simple_tag
+def getvars(request, excludes):
+    getvars = request.GET.copy()
+    excludes = excludes.split(',')
+    for p in excludes:
+        if p in getvars:
+            del getvars[p]
+        if len(getvars.keys()) > 0:
+            return "&%s" % getvars.urlencode()
+        else:
+            return ''
