@@ -77,9 +77,7 @@ class FormHelperMixin(object):
 
     def add_select_component(self, fields=[], exclude=[], include_all_if_empty=True):
         """
-        为widget为select的字段添加 class select_component （选择组件样式）
-        :fields 需要包含的段名，为空表示所有
-        :exclude 需要排除的字段名
+        add class select_component to select widgets.
         """
         attr_name = 'class'
         attr_val = 'select_component'
@@ -91,11 +89,7 @@ class FormHelperMixin(object):
 
     def add_attr2fields(self, attr_name, attr_val, fields=[], exclude=[], include_all_if_empty=True):
         """
-        为form字段增加attr
-        :attr_name 需要添加的attr名称
-        :attr_val 需要添加的值
-        :fields 需要包含的段名，为空表示所有
-        :exclude 需要排除的字段名
+        add attr to fields
         """
         for f in self.filter_fields(self, fields, exclude, include_all_if_empty):
             f = self.fields[f.name]
@@ -104,20 +98,19 @@ class FormHelperMixin(object):
 
     def add_class2fields(self, html_class, fields=[], exclude=[], include_all_if_empty=True):
         """
-        为form字段增加class
-        :html_class 需要添加的class
-        :fields 需要添加class的段名，为空表示所有
-        :exclude 需要排除的字段名
+        add class to html widgets.
         """
         self.add_attr2fields('class', html_class, fields, exclude)
 
     def filter_fields(form, fields=[], exclude=[], include_all_if_empty=True):
         """
         filter fields
-        :fields
-        :exclude
-        :include_all_if_empty if fields is empty return all fields
-        @return 字段列表
+
+        fields:
+        exclude:
+        include_all_if_empty: if fields is empty return all fields
+
+        return: fileds
         """
         if not include_all_if_empty and not fields:
             return []
@@ -131,12 +124,14 @@ class FormHelperMixin(object):
         return ret
 
     def set_required_fields(self, fields=[]):
+        """ set required to True """
         fields = self.filter_fields(fields)
         for f in fields:
             f = self.fields[f.name]
             f.required = True
 
     def check_uniqe(self, obj_class, error_msg=_('Must be unique'), **kwargs):
+        """ check if this object is unique """
         if obj_class.objects.filter(**kwargs).exclude(pk=self.instance.pk):
             raise forms.ValidationError(error_msg)
 

@@ -28,6 +28,7 @@ MONTH_CHOICES = get_month_choices(None)
 
 
 def fmt_month(month):
+    """ format month(1 to 01) """
     if not month:
         return month
     return ("%s" % month).zfill(2)
@@ -43,6 +44,12 @@ def get_year_choices(start_year=-5, end_year=2, blank_label=''):
 
 
 def fmt_datetime(d, fmt='', local=True):
+    """
+    format date with local support
+    ``d``: datetime to format
+    ``fmt``: format, default is '%Y-%m-%d %H-%M'
+    ``local``: format as local time
+    """
     if not d:
         return ''
     if local:

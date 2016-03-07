@@ -23,6 +23,7 @@ def get_pks(qdict, k):
 def request_get_next(request, default_next):
     """
     get next url form request
+
     order: POST.next GET.next HTTP_REFERER, default_next
     """
     next_url = request.POST.get('next')\

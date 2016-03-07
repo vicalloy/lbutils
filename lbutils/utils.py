@@ -20,8 +20,10 @@ def fmt_num(num, zero_num=None):
 
 
 def create_class(class_name, *args, **kwargs):
-    """ create class instance
-    class_name: name of class ex: "django.http.HttpResponse"
+    """
+    create class instance
+
+    class_name: name of class i.e.: "django.http.HttpResponse"
     *args, **kwargs: param for class
     """
     idx = class_name.rindex(r'.')
