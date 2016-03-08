@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 import importlib
 from django.template.defaultfilters import floatformat
 from django.contrib.humanize.templatetags.humanize import intcomma
-from django.utils import six
 
 
 def safe_eval(source, *args, **kwargs):
@@ -31,10 +30,3 @@ def create_class(class_name, *args, **kwargs):
     _module = importlib.import_module(class_name[:idx])
     class_name = class_name[idx + 1:]
     return getattr(_module, class_name)(*args, **kwargs)
-
-
-def is_str(s):
-    cls_tuple = (str, unicode)
-    if six.PY3:
-        cls_tuple = (str, )
-    return isinstance(s, cls_tuple)

@@ -2,10 +2,10 @@
 from __future__ import unicode_literals
 
 import datetime
+from django.utils import six
 from django.db.models import Q, F
 from django.db.models import Sum
 from django.db.models import Max
-from .utils import is_str
 
 
 __all__ = (
@@ -96,7 +96,7 @@ def __gen_query_params(qdata):
     for k, v in qdata.items():
         if k.startswith('q__'):
             k = k[3:]
-            if not is_str(v):
+            if not isinstance(v, six.text_type):
                 if v is not None:
                     kw_query_params[k] = v
                 continue
@@ -120,7 +120,7 @@ def __gen_query_params(qdata):
                     tmp_q = tmp_q | Q(**{k: o})
                 q = q & tmp_q
                 continue
-            if is_str(v):
+            if isinstance(v, six.text_type):
                 v = {'__True': True, '__False': False}.get(v, v)
             kw_query_params[k] = v
     return q, kw_query_params
