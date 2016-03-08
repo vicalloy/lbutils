@@ -5,6 +5,7 @@ import datetime
 from django.db.models import Q, F
 from django.db.models import Sum
 from django.db.models import Max
+from django.utils import six
 
 
 __all__ = (
@@ -95,7 +96,10 @@ def __gen_query_params(qdata):
     for k, v in qdata.items():
         if k.startswith('q__'):
             k = k[3:]
-            if not isinstance(v, (str, unicode)):
+            cls_tuple = (str, unicode)
+            if six.PY3:
+                cls_tuple = (str, )
+            if not isinstance(v, cls_tuple):
                 if v is not None:
                     kw_query_params[k] = v
                 continue
