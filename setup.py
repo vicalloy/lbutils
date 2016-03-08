@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 
 def long_desc(root_path):
-    FILES = ['README.md']
+    FILES = ['README.rst']
     for filename in FILES:
         filepath = os.path.realpath(os.path.join(root_path, filename))
         if os.path.isfile(filepath):
