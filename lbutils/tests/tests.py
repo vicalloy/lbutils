@@ -104,3 +104,7 @@ class QSTests(TestCase):
         qdata = {'q__is_active': '__False'}
         qs = do_filter(books, qdata)
         self.assertEqual(1, qs.count())
+
+
+class FormTests(TestCase):
+    pass
