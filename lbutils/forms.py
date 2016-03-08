@@ -5,10 +5,10 @@ from django import forms
 from django.forms.formsets import BaseFormSet
 from django.forms.models import BaseModelFormSet
 from django.forms.models import BaseInlineFormSet
-from crispy_forms.bootstrap import PrependedText
 from django.utils.translation import ugettext_lazy as _
 
 try:
+    from crispy_forms.bootstrap import PrependedText
     from crispy_forms.helper import FormHelper
     from crispy_forms.layout import Layout
     from crispy_forms.bootstrap import StrictButton
