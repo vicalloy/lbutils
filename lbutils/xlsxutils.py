@@ -4,15 +4,12 @@ from __future__ import unicode_literals
 import codecs
 from datetime import datetime
 from django.http import HttpResponse
+from django.utils.six import StringIO
 
 try:
     import xlsxwriter as xlwt
 except ImportError:
     pass
-try:
-    import cStringIO as StringIO
-except ImportError:
-    import StringIO
 
 
 def export_xlsx(wb, output, fn):

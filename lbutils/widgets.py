@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from itertools import chain
+import django
 from django.utils.encoding import force_text
 from django.forms.models import ModelChoiceIterator
 from django.utils.html import escape
@@ -10,7 +11,9 @@ try:
 except ImportError:  # Django >= 1.9
     from django.forms.utils import flatatt
 from django.utils.safestring import mark_safe
-from django.utils.datastructures import MultiValueDict, MergeDict
+from django.utils.datastructures import MultiValueDict
+if django.__version__ >= '1.9':
+    from django.utils.datastructures import MergeDict
 from django.forms import Select
 from django.forms import MultipleHiddenInput, HiddenInput
 from django.forms.widgets import Widget, Textarea, CheckboxInput
@@ -74,7 +77,10 @@ class JustSelectedSelectMultiple(JustSelectedSelect):
         return mark_safe(u'\n'.join(output))
 
     def value_from_datadict(self, data, files, name):
-        if isinstance(data, (MultiValueDict, MergeDict)):
+        cls_tuple = (MultiValueDict, )
+        if django.__version__ >= '1.9':
+            cls_tuple = (MultiValueDict, MergeDict, )
+        if isinstance(data, cls_tuple):
             return data.getlist(name)
         return data.get(name, None)
 
