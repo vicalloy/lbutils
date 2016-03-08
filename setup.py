@@ -30,7 +30,7 @@ setup(
     author_email='zbirder@gmail.com',
     url='https://github.com/vicalloy/lbutils',
     packages=find_packages(),
-    install_requires=['Django>=1.4.2'],
+    install_requires=['Django>=1.6.0'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
@@ -38,7 +38,6 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.2',
@@ -47,7 +46,7 @@ setup(
         'Framework :: Django',
     ],
     zip_safe=False,
-    tests_require=["Django>=1.4.2"],
+    tests_require=["Django>=1.6.0"],
     test_suite='runtests.runtests',
     package_data={
         'lbutils': [
