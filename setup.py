@@ -16,7 +16,7 @@ long_description = "\n\n".join(long_desc(HERE))
 
 
 def get_version(root_path):
-    with open(os.path.join(root_path, 'model_utils', '__init__.py')) as f:
+    with open(os.path.join(root_path, 'lbutils', '__init__.py')) as f:
         for line in f:
             if line.startswith('__version__ ='):
                 return line.split('=')[1].strip().strip('"\'')
@@ -50,7 +50,7 @@ setup(
     tests_require=["Django>=1.4.2"],
     test_suite='runtests.runtests',
     package_data={
-        'model_utils': [
+        'lbutils': [
             'locale/*/LC_MESSAGES/django.po', 'locale/*/LC_MESSAGES/django.mo'
         ],
     },
