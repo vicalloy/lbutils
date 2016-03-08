@@ -3,13 +3,9 @@ language: python
 python: 2.7
 
 env:
-  - TOXENV=py26-django14
-  - TOXENV=py26-django15
-  - TOXENV=py26-django16
   - TOXENV=py27-django14
   - TOXENV=py27-django19
   - TOXENV=py27-django_trunk
-  - TOXENV=py27-django15_nosouth
   - TOXENV=py27-django15
   - TOXENV=py27-django16
   - TOXENV=py27-django17
