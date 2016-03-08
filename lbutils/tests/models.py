@@ -2,15 +2,12 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.utils.encoding import python_2_unicode_compatible
 
 
-@python_2_unicode_compatible
 class Category(models.Model):
     name = models.CharField(max_length=255)
 
 
-@python_2_unicode_compatible
 class Book(models.Model):
     name = models.CharField(max_length=255)
     descn = models.TextField(blank=True)
@@ -24,6 +21,3 @@ class Book(models.Model):
         permissions = (
             ("sft_mgr_book", "manager book"),
         )
-
-    def __unicode__(self):
-        return self.name
