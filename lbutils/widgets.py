@@ -12,7 +12,7 @@ except ImportError:  # Django >= 1.9
     from django.forms.utils import flatatt
 from django.utils.safestring import mark_safe
 from django.utils.datastructures import MultiValueDict
-if django.__version__ >= '1.9':
+if django.VERSION < (1, 9):
     from django.utils.datastructures import MergeDict
 from django.forms import Select
 from django.forms import MultipleHiddenInput, HiddenInput
@@ -78,7 +78,7 @@ class JustSelectedSelectMultiple(JustSelectedSelect):
 
     def value_from_datadict(self, data, files, name):
         cls_tuple = (MultiValueDict, )
-        if django.__version__ >= '1.9':
+        if django.VERSION < (1, 9):
             cls_tuple = (MultiValueDict, MergeDict, )
         if isinstance(data, cls_tuple):
             return data.getlist(name)
