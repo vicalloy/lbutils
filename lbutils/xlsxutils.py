@@ -12,6 +12,11 @@ except ImportError:
     pass
 
 
+__all__ = (
+    'export_xlsx', 'xlsw_write_row', 'simple_export2xlsx',
+)
+
+
 def export_xlsx(wb, output, fn):
     """
     export as excel

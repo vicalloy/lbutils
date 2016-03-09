@@ -6,6 +6,11 @@ from django.template.defaultfilters import floatformat
 from django.contrib.humanize.templatetags.humanize import intcomma
 
 
+__all__ = (
+    'safe_eval', 'fmt_num', 'create_instance',
+)
+
+
 def safe_eval(source, *args, **kwargs):
     """ eval without import """
     source = source.replace('import', '')  # import is not allowed
@@ -19,7 +24,7 @@ def fmt_num(num, zero_num=None):
     return intcomma(num, False)
 
 
-def create_class(class_name, *args, **kwargs):
+def create_instance(class_name, *args, **kwargs):
     """
     create class instance
 

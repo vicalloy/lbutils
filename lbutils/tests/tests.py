@@ -6,7 +6,7 @@ from django.test import TestCase
 from lbutils import fmt_month
 from lbutils import get_year_choices
 from lbutils import fmt_num
-from lbutils import create_class
+from lbutils import create_instance
 from lbutils import get_or_none
 from lbutils import get_sum
 from lbutils import get_max
@@ -32,8 +32,8 @@ class UtilsTests(TestCase):
     def test_fmt_num(self):
         self.assertEqual('9,000,000', fmt_num(9000000))
 
-    def test_create_class(self):
-        d = create_class('datetime.datetime', year=2000, month=2, day=1)
+    def test_create_instance(self):
+        d = create_instance('datetime.datetime', year=2000, month=2, day=1)
         self.assertEqual('2000-02-01', d.strftime('%Y-%m-%d'))
 
 

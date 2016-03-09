@@ -9,11 +9,8 @@ from django.db.models import Max
 
 
 __all__ = (
-    'get_or_none',
-    'get_pk_or_none',
-    'get_sum',
-    'get_max',
-    'do_filter',
+    'get_or_none', 'get_pk_or_none', 'get_sum',
+    'get_max', 'do_filter',
 )
 
 

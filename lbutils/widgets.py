@@ -19,9 +19,7 @@ from django.forms import MultipleHiddenInput, HiddenInput
 from django.forms.widgets import Widget, Textarea, CheckboxInput
 
 __all__ = (
-    'JustSelectedSelect',
-    'JustSelectedSelectMultiple',
-    'TextWidget',
+    'JustSelectedSelect', 'JustSelectedSelectMultiple', 'TextWidget',
 )
 
 

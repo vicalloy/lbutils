@@ -20,6 +20,12 @@ from .widgets import JustSelectedSelectMultiple
 from .widgets import TextWidget
 
 
+__all__ = (
+    'FormHelperMixin', 'QuickSearchForm', 'LBBaseFormSet',
+    'LBBaseModelFormSet', 'LBBaseInlineFormSet', 'row_div',
+)
+
+
 class FormHelperMixin(object):
 
     def init_crispy_helper(self):
@@ -206,14 +212,6 @@ class LBBaseInlineFormSet(BaseInlineFormSet):
     def _construct_form(self, i, **kwargs):
         kwargs.update(self.ext_params)
         return super(LBBaseInlineFormSet, self)._construct_form(i, **kwargs)
-
-
-def add_empty_form_plus_for_fs(formset, **kwargs):
-    formset.empty_form_plus = formset.form(
-        auto_id=formset.auto_id,
-        empty_permitted=True,
-        prefix=formset.add_prefix('__prefix__'), **kwargs)
-    formset.add_fields(formset.empty_form_plus, None)
 
 
 def row_div(fnames, span=4, hidden_fields=[]):
