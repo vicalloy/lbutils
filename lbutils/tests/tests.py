@@ -122,6 +122,7 @@ class FormTests(TestCase):
         data = {'name': 'book name'}
         self.form = BookForm(data)
 
+    @skipUnless(django.VERSION < (1, 10, 0), "crispy_forms not support Django 1.10")
     def test_quicksearchform(self):
         from crispy_forms.templatetags.crispy_forms_filters import as_crispy_form
         data = {'q_quick_search_kw': 'keyword'}
