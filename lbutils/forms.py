@@ -5,6 +5,7 @@ from django import forms
 from django.forms.formsets import BaseFormSet
 from django.forms.models import BaseModelFormSet
 from django.forms.models import BaseInlineFormSet
+from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
 
 try:
@@ -44,7 +45,7 @@ class FormHelperMixin(object):
         errors_data = self.errors.as_data()
         for key, value in errors_data.items():
             field_label = self.fields[key].label
-            err_descn = ''.join([unicode(e.message) for e in value])
+            err_descn = ''.join([force_text(e.message) for e in value])
             error = "%s %s" % (field_label, err_descn)
             errors.append(error)
         return ','.join(errors)
