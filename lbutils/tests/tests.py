@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 
+from unittest import skipUnless
+import django
 from django.test import TestCase
 
 from lbutils import fmt_month
@@ -144,6 +146,7 @@ class FormTests(TestCase):
         self.form.init_crispy_helper()
         self.assertTrue(self.form.helper is not None)
 
+    @skipUnless(django.VERSION >= (1, 7, 0), "test only applies to Django 1.7+")
     def test_errors_as_text(self):
         data = {}
         form = BookForm(data)
@@ -156,7 +159,6 @@ class FormTests(TestCase):
 
     def test_as_hidden_fields(self):
         self.form.as_hidden_fields(include_all_if_empty=True)
-        print self.form.as_table()
         self.assertTrue('<input id="id_name" name="name" type="hidden" value="book name" />' in self.form.as_table())
 
     def test_add_attr2fields(self):

@@ -36,6 +36,9 @@ class FormHelperMixin(object):
         return helper
 
     def errors_as_text(self):
+        """
+        only available to Django 1.7+
+        """
         errors = []
         errors.append(self.non_field_errors().as_text())
         errors_data = self.errors.as_data()
