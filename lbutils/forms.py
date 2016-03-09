@@ -46,29 +46,18 @@ class FormHelperMixin(object):
             errors.append(error)
         return ','.join(errors)
 
-    def as_param_ext_val(self, field_name, param_field_id, val_name):
-        self.add_class2fields('from-param-ext', fields=[field_name])
-        self.add_attr2fields('param-field', param_field_id, fields=[field_name])
-        self.add_attr2fields('val-name', val_name, fields=[field_name])
-
-    def as_readonly_fields(self, fields=[], exclude=[]):
-        if not (fields or exclude):
-            return
+    def as_readonly_fields(self, fields=[], exclude=[], include_all_if_empty=True):
         self.add_attr2fields(
             'readonly', 'readonly',
-            fields=fields, exclude=exclude)
+            fields=fields, exclude=exclude, include_all_if_empty=True)
 
     def as_text_fields(self, fields=[], exclude=[], include_all_if_empty=True):
-        if not (fields or exclude):
-            return
-        for f in self.filter_fields(self, fields, exclude, include_all_if_empty):
+        for f in self.filter_fields(fields, exclude, include_all_if_empty):
             f = self.fields[f.name]
             f.widget = TextWidget(src_widget=f.widget)
 
     def as_hidden_fields(self, fields=[], exclude=[], include_all_if_empty=True):
-        if not (fields or exclude):
-            return
-        for f in self.filter_fields(self, fields, exclude, include_all_if_empty):
+        for f in self.filter_fields(fields, exclude, include_all_if_empty):
             f = self.fields[f.name]
             f.required = False
             if isinstance(f.widget, (forms.SelectMultiple, JustSelectedSelectMultiple)):
@@ -76,28 +65,11 @@ class FormHelperMixin(object):
             else:
                 f.widget = forms.HiddenInput()
 
-    def as_sub_param_field(self, field_name, parent_field_id, param_code):
-        self.add_class2fields('ajax-sub-param', fields=[field_name])
-        self.add_attr2fields('parent-field', parent_field_id, fields=[field_name])
-        self.add_attr2fields('param-code', param_code, fields=[field_name])
-
-    def add_select_component(self, fields=[], exclude=[], include_all_if_empty=True):
-        """
-        add class select_component to select widgets.
-        """
-        attr_name = 'class'
-        attr_val = 'select_component'
-        for f in self.filter_fields(fields, exclude, include_all_if_empty):
-            f = self.fields[f.name]
-            if isinstance(f.widget, forms.Select):
-                org_val = f.widget.attrs.get(attr_name, '')
-                f.widget.attrs[attr_name] = '%s %s' % (org_val, attr_val) if org_val else attr_val
-
     def add_attr2fields(self, attr_name, attr_val, fields=[], exclude=[], include_all_if_empty=True):
         """
         add attr to fields
         """
-        for f in self.filter_fields(self, fields, exclude, include_all_if_empty):
+        for f in self.filter_fields(fields, exclude, include_all_if_empty):
             f = self.fields[f.name]
             org_val = f.widget.attrs.get(attr_name, '')
             f.widget.attrs[attr_name] = '%s %s' % (org_val, attr_val) if org_val else attr_val
@@ -108,7 +80,7 @@ class FormHelperMixin(object):
         """
         self.add_attr2fields('class', html_class, fields, exclude)
 
-    def filter_fields(form, fields=[], exclude=[], include_all_if_empty=True):
+    def filter_fields(self, fields=[], exclude=[], include_all_if_empty=True):
         """
         filter fields
 
@@ -121,7 +93,7 @@ class FormHelperMixin(object):
         if not include_all_if_empty and not fields:
             return []
         ret = []
-        for f in form.visible_fields():
+        for f in self.visible_fields():
             if fields and f.name not in fields:
                 continue
             if exclude and f.name in exclude:
@@ -129,7 +101,7 @@ class FormHelperMixin(object):
             ret.append(f)
         return ret
 
-    def set_required_fields(self, fields=[]):
+    def as_required_fields(self, fields=[]):
         """ set required to True """
         fields = self.filter_fields(fields)
         for f in fields:
@@ -148,7 +120,7 @@ class FormHelperMixin(object):
 
 
 class QuickSearchForm(FormHelperMixin, forms.Form):
-    q_quick_search_kw = forms.CharField(label="关键字", required=False)
+    q_quick_search_kw = forms.CharField(label=_("Keyword"), required=False)
 
     def __init__(self, *args, **kw):
         super(QuickSearchForm, self).__init__(*args, **kw)

@@ -26,6 +26,9 @@ addons:
     packages:
       - python3.5
 
+notifications:
+  email: false
+
 install:
   - pip install --upgrade pip setuptools tox virtualenv coveralls
 

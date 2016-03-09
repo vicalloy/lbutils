@@ -8,6 +8,7 @@ import django
 
 DEFAULT_SETTINGS = dict(
     INSTALLED_APPS=(
+        'crispy_forms',
         'lbutils',
         'lbutils.tests',
     ),
