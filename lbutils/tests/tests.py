@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 
@@ -240,6 +241,8 @@ class ViewsTests(TestCase):
         self.assertTrue(forms_is_valid(forms))
 
     def test_render_json(self):
-        data = {'name': 'name'}
-        self.assertEqual('{"name": "name"}', render_json(data).content)
+        data = {'name': 'name 中文'}
+        out = render_json(data).content
+        self.assertEqual(
+            b'{"name": "name \xe4\xb8\xad\xe6\x96\x87"}', out)
         # TODO jsonp
