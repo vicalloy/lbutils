@@ -9,8 +9,8 @@ import django
 
 DEFAULT_SETTINGS = dict(
     INSTALLED_APPS=(
-        'model_utils',
-        'model_utils.tests',
+        'lbutils',
+        'lbutils.tests',
     ),
     DATABASES={
         "default": {
