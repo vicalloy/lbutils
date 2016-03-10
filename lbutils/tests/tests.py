@@ -123,6 +123,9 @@ class QSTests(TestCase):
         qdata = {'q__name__icontains': 'book-03'}
         qs = do_filter(books, qdata)
         self.assertEqual(1, qs.count())
+        qdata = {'q__name__icontains': 'book-02,book-03'}
+        qs = do_filter(books, qdata)
+        self.assertEqual(2, qs.count())
         qdata = {'q__category__name__icontains': 'catego'}
         qs = do_filter(books, qdata)
         self.assertEqual(2, qs.count())
