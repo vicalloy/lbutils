@@ -15,9 +15,12 @@ from lbutils import get_sum
 from lbutils import get_max
 from lbutils import do_filter
 from lbutils import QuickSearchForm
+from lbutils import forms_is_valid
+from lbutils import render_json
 
 from .models import Book
 from .models import Category
+from .models import Author
 from .forms import BookForm
 
 
@@ -42,21 +45,31 @@ class UtilsTests(TestCase):
         self.assertEqual('2000-02-01', d.strftime('%Y-%m-%d'))
 
 
+def create_books():
+    category = Category.objects.create(name='category-01')
+    Category.objects.create(name='category-02')
+    author1 = Author.objects.create(name='author-01')
+    author2 = Author.objects.create(name='author-02')
+    Author.objects.create(name='author-03')
+    book = Book.objects.create(
+        category=category, name='book-01',
+        price=100,
+        descn='descn')
+    book.authors = [author1, author2]
+    Book.objects.create(
+        category=category, name='book-02',
+        price=200,
+        descn='descn')
+    Book.objects.create(
+        name='book-03',
+        is_active=False,
+        descn='descn')
+    return Book.objects.all()
+
+
 class QSTests(TestCase):
     def setUp(self):
-        category = Category.objects.create(name='category')
-        Book.objects.create(
-            category=category, name='book-01',
-            price=100,
-            descn='descn')
-        Book.objects.create(
-            category=category, name='book-02',
-            price=200,
-            descn='descn')
-        Book.objects.create(
-            name='book-03',
-            is_active=False,
-            descn='descn')
+        create_books()
 
     def test_get_or_none(self):
         self.assertEqual(None, get_or_none(Book, name='not exist'))
@@ -85,7 +98,7 @@ class QSTests(TestCase):
         qdata = {'q_quick_search_kw': ''}
         qs = do_filter(books, qdata, ['name', 'category__name'])
         self.assertEqual(3, qs.count())
-        qdata = {'q_quick_search_kw': '01'}
+        qdata = {'q_quick_search_kw': 'ook-01'}
         qs = do_filter(books, qdata, ['name', 'category__name'])
         self.assertEqual(1, qs.count())
         qdata = {'q_quick_search_kw': 'xxxxx'}
@@ -119,8 +132,11 @@ class QSTests(TestCase):
 
 class FormTests(TestCase):
     def setUp(self):
+        create_books()
         data = {'name': 'book name'}
         self.form = BookForm(data)
+        self.edit_form = BookForm(
+            instance=Book.objects.get(name='book-01'))
 
     @skipUnless(django.VERSION < (1, 10, 0), "crispy_forms not support Django 1.10")
     def test_quicksearchform(self):
@@ -137,9 +153,9 @@ class FormTests(TestCase):
         fields = self.form.filter_fields(field_names)
         self.assertEqual(field_names, [e.name for e in fields])
         fields = self.form.filter_fields(exclude=field_names)
-        self.assertEqual(['price', 'is_active', 'category'], [e.name for e in fields])
+        self.assertEqual(['price', 'is_active', 'category', 'authors'], [e.name for e in fields])
         fields = self.form.filter_fields(include_all_if_empty=True)
-        self.assertEqual(['name', 'descn', 'price', 'is_active', 'category'], [e.name for e in fields])
+        self.assertEqual(['name', 'descn', 'price', 'is_active', 'category', 'authors'], [e.name for e in fields])
         fields = self.form.filter_fields(include_all_if_empty=False)
         self.assertEqual([], [e.name for e in fields])
 
@@ -155,8 +171,8 @@ class FormTests(TestCase):
         self.assertTrue('Name' in form.errors_as_text())
 
     def test_as_text_fields(self):
-        self.form.as_text_fields(include_all_if_empty=True)
-        self.assertTrue("<span class='text-value'>book name</span>" in self.form.as_table())
+        self.edit_form.as_text_fields(include_all_if_empty=True)
+        self.assertTrue("<span class='text-value'>book-01</span>" in self.edit_form.as_table())
 
     def test_as_hidden_fields(self):
         self.form.as_hidden_fields(include_all_if_empty=True)
@@ -179,4 +195,51 @@ class FormTests(TestCase):
         self.assertTrue('errorlist' not in form.as_table())
 
     def test_check_uniqe(self):
-        pass
+        book = Book.objects.create(
+            name='book-0x',
+            price=100,
+            descn='descn')
+        # existed
+        data = {'name': 'book-0x'}
+        form = BookForm(data)
+        form.is_valid()
+        self.assertTrue('errorlist' in form.as_table())
+        # edit object
+        form = BookForm(data, instance=book)
+        form.is_valid()
+        self.assertTrue('errorlist' not in form.as_table())
+        # not existed
+        form = BookForm({'name': 'new book'}, instance=book)
+        form.is_valid()
+        self.assertTrue('errorlist' not in form.as_table())
+
+    def test_row_div(self):
+        self.form.row_div(['name', 'price'], 6)
+
+    def test_just_selected_widgets(self):
+        html = self.edit_form.as_table()
+        self.assertTrue('category-01' in html)
+        self.assertTrue('category-02' not in html)
+        self.assertTrue('author-01' in html)
+        self.assertTrue('author-02' in html)
+        self.assertTrue('author-03' not in html)
+
+
+class FormSetTests(TestCase):
+    pass
+
+
+class ViewsTests(TestCase):
+    def test_forms_is_valid(self):
+        sform = QuickSearchForm({})
+        bform = BookForm({})
+        forms = [sform, bform]
+        self.assertFalse(forms_is_valid(forms))
+        bform = BookForm({'name': 'ok'})
+        forms = [sform, bform]
+        self.assertTrue(forms_is_valid(forms))
+
+    def test_render_json(self):
+        data = {'name': 'name'}
+        self.assertEqual('{"name": "name"}', render_json(data).content)
+        # TODO jsonp

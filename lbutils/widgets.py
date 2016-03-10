@@ -53,7 +53,10 @@ class JustSelectedSelect(Select):
     def render_readonly(self, name, value, attrs):
         schoices = self.choices
         if isinstance(schoices, ModelChoiceIterator):
-            schoices.queryset = schoices.queryset.filter(pk=value)
+            if isinstance(value, list):
+                schoices.queryset = schoices.queryset.filter(pk__in=value)
+            else:
+                schoices.queryset = schoices.queryset.filter(pk=value)
         for o in schoices:
             if "%s" % o[0] == "%s" % value:
                 return o[1]
@@ -133,6 +136,7 @@ class TextWidget(Widget):
             descn = u'√' if value else u'×'
             return self.gen_output(descn, value, name)
         descn = '' if value is None else '%s' % value
-        if isinstance(self.src_widget, Textarea):  # TODO 避免pre的问题，做的临时处理
+        # TODO if in pre element
+        if isinstance(self.src_widget, Textarea):
             descn = value
         return self.gen_output(descn, value, name)
