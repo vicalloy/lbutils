@@ -7,4 +7,4 @@ django-lbutils
 .. image:: https://coveralls.io/repos/github/vicalloy/lbutils/badge.svg?branch=master
    :target: https://coveralls.io/github/vicalloy/lbutils?branch=master
 
-A set of useful function/tags/filter for Django.
+A set of useful utils for Django.

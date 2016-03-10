@@ -6,6 +6,9 @@
 django-lbutils
 ==========================================
 
+A set of useful utils for Django.
+
+
 Contents:
 
 .. toctree::
