@@ -100,13 +100,7 @@ def __gen_query_params(qdata):
             if v == '':
                 continue
             v = v.replace('，', ',')
-            if k.startswith('d__'):
-                k = k[3:]
-                if v:
-                    v = datetime.datetime.strptime(v, "%Y-%m-%d").date()
-                    kw_query_params[k] = v
-                continue
-            elif v.startswith('F__'):
+            if v.startswith('F__'):
                 v = F(v[3:])
             elif k.endswith('__in'):
                 v = [e for e in v.split(',') if e]

@@ -123,7 +123,10 @@ class QSTests(TestCase):
         qdata = {'q__name__icontains': 'book-03'}
         qs = do_filter(books, qdata)
         self.assertEqual(1, qs.count())
-        qdata = {'q__name__icontains': 'book-02,book-03'}
+        qdata = {'q__name__icontains': 'ook-02,ook-03'}
+        qs = do_filter(books, qdata)
+        self.assertEqual(2, qs.count())
+        qdata = {'q__name__in': 'book-02,book-03'}
         qs = do_filter(books, qdata)
         self.assertEqual(2, qs.count())
         qdata = {'q__category__name__icontains': 'catego'}
@@ -132,6 +135,10 @@ class QSTests(TestCase):
         qdata = {'q__is_active': '__False'}
         qs = do_filter(books, qdata)
         self.assertEqual(1, qs.count())
+        # sql: select * from table where field1>field2
+        qdata = {'q__name__gt': 'F__name'}
+        qs = do_filter(books, qdata)
+        self.assertEqual(0, qs.count())
 
 
 class FormTests(TestCase):
