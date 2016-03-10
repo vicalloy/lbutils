@@ -11,20 +11,18 @@ except ImportError:
 
 
 __all__ = (
-    'get_pks', 'request_get_next', 'save_formset',
+    'qdict_get_list', 'request_get_next', 'save_formset',
     'render_json', 'has_any_perm', 'get_post_data',
     'get_client_ip', 'create_formset', 'forms_is_valid',
 )
 
 
-def get_pks(qdict, k):
-    """ get list from QueryDict, if not find return []  """
-    try:
-        pks = qdict.getlist(k)
-        return [e for e in pks if e]
-    except Exception:
-        pass
-    return []
+def qdict_get_list(qdict, k):
+    """
+    get list from QueryDict and remove blank date from list.
+    """
+    pks = qdict.getlist(k)
+    return [e for e in pks if e]
 
 
 def request_get_next(request, default_next):

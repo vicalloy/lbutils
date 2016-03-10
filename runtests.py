@@ -17,6 +17,7 @@ DEFAULT_SETTINGS = dict(
             "ENGINE": "django.db.backends.sqlite3"
         }
     },
+    GET_SETTING='ABC',
     SILENCED_SYSTEM_CHECKS=[],
 )
 

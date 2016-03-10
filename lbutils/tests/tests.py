@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 
 from unittest import skipUnless
 import django
+from django.http import QueryDict
 from django.test import TestCase
 
 from lbutils import fmt_month
@@ -18,6 +19,10 @@ from lbutils import do_filter
 from lbutils import QuickSearchForm
 from lbutils import forms_is_valid
 from lbutils import render_json
+from lbutils import qdict_get_list
+from lbutils import simple_export2xlsx
+from lbutils.templatetags.lbutils import display_array
+from lbutils.templatetags.lbutils import get_setting
 
 from .models import Book
 from .models import Category
@@ -256,3 +261,34 @@ class ViewsTests(TestCase):
         self.assertEqual(
             b'{"name": "name \xe4\xb8\xad\xe6\x96\x87"}', out)
         # TODO jsonp
+
+    def test_qdict_get_list(self):
+        data = QueryDict('a=1&a=2&a=')
+        self.assertTrue('' not in qdict_get_list(data, 'a'))
+
+
+class TagsTests(TestCase):
+    def test_display_array(self):
+        self.assertEqual('1, 2, 3', display_array(['1', '2', '3']))
+
+    def test_get_setting(self):
+        ctx = {}
+        v = get_setting(ctx, key='GET_SETTING', default_val="", as_key=None)
+        self.assertEqual('ABC', v)
+        get_setting(ctx, key='GET_SETTING', default_val="", as_key='new')
+        self.assertEqual('ABC', ctx['new'])
+        v = get_setting(ctx, key='GET_NOT_EXIST', default_val="DEFAULT", as_key=None)
+        self.assertEqual('DEFAULT', v)
+
+
+class XlsxUtilsTests(TestCase):
+    def test_simple_export2xlsx(self):
+        def func_data(o):
+            return [
+                o.name,
+                o.price
+            ]
+        qs = Book.objects.all()
+        titles = ['name', 'price']
+        response = simple_export2xlsx('fn.xlsx', titles, qs, func_data)
+        self.assertTrue(response is not None)

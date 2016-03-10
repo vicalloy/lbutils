@@ -12,7 +12,7 @@ register = template.Library()
 def get_setting(context, key, default_val="", as_key=None):
     """
     get val form settings and set to context
-      {% load swift %}
+      {% load lbutils %}
       {% get_setting "key" default_val "as_key" %}
       {{ as_key }}
       if as_key is None, this tag will return val

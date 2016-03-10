@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import datetime
 from django.utils import six
 from django.db.models import Q, F
 from django.db.models import Sum
