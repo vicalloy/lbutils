@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 import codecs
 from datetime import datetime
 from django.http import HttpResponse
-from django.utils.six import StringIO
+from django.utils.six import BytesIO
 
 try:
     import xlsxwriter as xlwt
@@ -53,7 +53,7 @@ def simple_export2xlsx(filename, titles, qs, func_data):
     qs: queryset to export
     func_data: a function to format object to list. ex: `lambda o: [o.pk, o.name]`
     """
-    output = StringIO()
+    output = BytesIO()
     wb = xlwt.Workbook(output)
     ws = wb.add_worksheet(filename)
     header_fmt = wb.add_format()
