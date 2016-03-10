@@ -21,7 +21,7 @@ class Author(models.Model):
     name = models.CharField(max_length=255)
 
     def __unicode__(self):
-        return unicode(self.name)
+        return self.name
 
     def __str__(self):
         return self.name
@@ -44,7 +44,7 @@ class Book(models.Model):
         )
 
     def __unicode__(self):
-        return unicode(self.name)
+        return self.name
 
     def __str__(self):
         return self.name
