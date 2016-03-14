@@ -21,6 +21,7 @@ from lbutils import forms_is_valid
 from lbutils import render_json
 from lbutils import qdict_get_list
 from lbutils import simple_export2xlsx
+from lbutils import format_filesize
 from lbutils.templatetags.lbutils import display_array
 from lbutils.templatetags.lbutils import get_setting
 
@@ -49,6 +50,11 @@ class UtilsTests(TestCase):
     def test_create_instance(self):
         d = create_instance('datetime.datetime', year=2000, month=2, day=1)
         self.assertEqual('2000-02-01', d.strftime('%Y-%m-%d'))
+
+    def test_format_filesize(self):
+        self.assertEqual('40 B', format_filesize(40))
+        self.assertEqual('3 KB', format_filesize(4000))
+        self.assertEqual('3 MB', format_filesize(4000000))
 
 
 def create_books():
