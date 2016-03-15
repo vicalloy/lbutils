@@ -53,8 +53,8 @@ class UtilsTests(TestCase):
 
     def test_format_filesize(self):
         self.assertEqual('40 B', format_filesize(40))
-        self.assertEqual('3 KB', format_filesize(4000))
-        self.assertEqual('3 MB', format_filesize(4000000))
+        self.assertEqual('3.91 KB', format_filesize(4000))
+        self.assertEqual('3.81 MB', format_filesize(4000000))
 
 
 def create_books():
