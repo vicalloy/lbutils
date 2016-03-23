@@ -47,9 +47,11 @@ def save_formset(formset, ext_vals):
         o.save()
 
 
-def render_json(data, ensure_ascii=False, request=None):
+def render_json(data, ensure_ascii=False, request=None, as_text=False):
     fmt = 'json'
-    content_type = "text/html"  # application/json
+    content_type = "application/json"
+    if as_text:
+        content_type = "text/html"
     plain = json.dumps(data, ensure_ascii=False)
     if request:
         fmt = request.GET.get('fmt', 'json')
