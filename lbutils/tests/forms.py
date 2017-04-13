@@ -3,13 +3,13 @@ from __future__ import unicode_literals
 
 from django import forms
 
-from lbutils import FormHelperMixin
+from lbutils import BootstrapFormHelperMixin
 from lbutils import JustSelectedSelect
 from lbutils import JustSelectedSelectMultiple
 from .models import Book
 
 
-class BookForm(FormHelperMixin, forms.ModelForm):
+class BookForm(BootstrapFormHelperMixin, forms.ModelForm):
     def __init__(self, *args, **kw):
         super(BookForm, self).__init__(*args, **kw)
         self.init_crispy_helper()

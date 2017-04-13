@@ -22,19 +22,12 @@ from .widgets import TextWidget
 
 
 __all__ = (
-    'FormHelperMixin', 'QuickSearchForm', 'LBBaseFormSet',
+    'FormHelperMixin', 'BootstrapFormHelperMixin', 'QuickSearchForm', 'LBBaseFormSet',
     'LBBaseModelFormSet', 'LBBaseInlineFormSet', 'row_div',
 )
 
 
 class FormHelperMixin(object):
-
-    def init_crispy_helper(self):
-        self.helper = helper = FormHelper()
-        helper.label_class = 'col-xs-2'
-        helper.field_class = 'col-xs-8'
-        helper.form_tag = False
-        return helper
 
     def errors_as_text(self):
         """
@@ -121,6 +114,28 @@ class FormHelperMixin(object):
         fields = self.filter_fields(fnames)
         fnames = [e.name for e in fields if not e.is_hidden]
         return row_div(fnames, span=span)
+
+
+class BootstrapFormHelperMixin(FormHelperMixin):
+
+    def init_crispy_helper(self):
+        # multicolumn form http://www.bootply.com/s2mmi1YyL4#
+        self.helper = helper = FormHelper()
+        helper.field_template = 'bootstrap3/multicolumnsfield.html'
+        helper.label_class = 'col-md-2'
+        helper.field_class = 'col-md-4'
+        helper.form_tag = False
+        return helper
+
+    def layout_fields(self, grouped_fields):
+        divs = []
+        one_row_fields = []
+        for fields in grouped_fields:
+            if len(fields) == 1:
+                one_row_fields.extend(fields)
+            divs.append(Div(*fields, css_class='form-group'),)
+        self.helper.layout = Layout(*divs)
+        self.one_row_fields = one_row_fields
 
 
 class QuickSearchForm(FormHelperMixin, forms.Form):
