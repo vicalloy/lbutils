@@ -32,6 +32,14 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     install_requires=['Django>=1.6.0'],
+    extras_require={
+        'django-crispy-forms': [
+            'django-crispy-forms>1.4',
+        ],
+        'xlsxwriter': [
+            'xlsxwriter>0.8',
+        ]
+    },
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Environment :: Web Environment',
