@@ -185,6 +185,13 @@ class FormTests(TestCase):
         self.form.init_crispy_helper()
         self.assertTrue(self.form.helper is not None)
 
+    def test_layout_fields(self):
+        self.form.init_crispy_helper()
+        self.form.layout_fields([
+            ('name', 'price'),
+            ('descn', ),
+        ])
+
     @skipUnless(django.VERSION >= (1, 7, 0), "test only applies to Django 1.7+")
     def test_errors_as_text(self):
         data = {}
