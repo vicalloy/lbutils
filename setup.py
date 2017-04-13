@@ -30,6 +30,7 @@ setup(
     author_email='zbirder@gmail.com',
     url='https://github.com/vicalloy/lbutils',
     packages=find_packages(),
+    include_package_data=True,
     install_requires=['Django>=1.6.0'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',
