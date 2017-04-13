@@ -87,16 +87,19 @@ def get_client_ip(request):
     return ip
 
 
-def create_formset(formset_class, prefix, **kwargs):
+def create_formset(
+        formset_class, prefix,
+        template_prefix=None, **kwargs):
     helper = FormHelper()
-    helper.template = 'swift/bootstrap3/table_inline_formset.html'
+    project_name = ''
+    template = 'bootstrap3/table_inline_formset.html'
+    if template_prefix:
+        template = "%s/%s" % (template_prefix, template)
+    helper.template = template
     formset = formset_class(prefix=prefix, **kwargs)
     formset.helper = helper
     return formset
 
 
 def forms_is_valid(forms):
-    is_valid = True
-    for form in forms:
-        is_valid = is_valid and form.is_valid()
-    return is_valid
+    return all([form.is_valid() for form in forms])
