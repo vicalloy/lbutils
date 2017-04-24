@@ -7,7 +7,7 @@ from django.contrib.humanize.templatetags.humanize import intcomma
 
 
 __all__ = (
-    'safe_eval', 'fmt_num', 'create_instance',
+    'safe_eval', 'fmt_num', 'as_callable', 'create_instance',
     'format_filesize',
 )
 
@@ -25,6 +25,14 @@ def fmt_num(num, zero_num=None):
     return intcomma(num, False)
 
 
+def as_callable(callable_path):
+    if callable(callable_path):
+        return callable_path
+    idx = callable_path.rindex(r'.')
+    _module = importlib.import_module(callable_path[:idx])
+    return getattr(_module, callable_path[idx + 1:])
+
+
 def create_instance(class_name, *args, **kwargs):
     """
     create class instance
@@ -32,10 +40,7 @@ def create_instance(class_name, *args, **kwargs):
     class_name: name of class i.e.: "django.http.HttpResponse"
     *args, **kwargs: param for class
     """
-    idx = class_name.rindex(r'.')
-    _module = importlib.import_module(class_name[:idx])
-    class_name = class_name[idx + 1:]
-    return getattr(_module, class_name)(*args, **kwargs)
+    return as_callable(class_name)(*args, **kwargs)
 
 
 def format_filesize(size):
