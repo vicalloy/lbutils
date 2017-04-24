@@ -118,12 +118,12 @@ class FormHelperMixin(object):
 
 class BootstrapFormHelperMixin(FormHelperMixin):
 
-    def init_crispy_helper(self):
+    def init_crispy_helper(self, label_class='col-md-2', field_class='col-md-4'):
         # multicolumn form http://www.bootply.com/s2mmi1YyL4#
         self.helper = helper = FormHelper()
         helper.field_template = 'bootstrap3/multicolumnsfield.html'
-        helper.label_class = 'col-md-2'
-        helper.field_class = 'col-md-4'
+        helper.label_class = label_class
+        helper.field_class = field_class
         helper.form_tag = False
         return helper
 
