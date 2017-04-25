@@ -10,11 +10,8 @@ try:
     from django.forms.util import flatatt
 except ImportError:  # Django >= 1.9
     from django.forms.utils import flatatt
-from django.utils.safestring import mark_safe
-from django.utils.datastructures import MultiValueDict
-if django.VERSION < (1, 9):
-    from django.utils.datastructures import MergeDict
 from django.forms import Select
+from django.forms import SelectMultiple
 from django.forms import MultipleHiddenInput, HiddenInput
 from django.forms.widgets import Widget, Textarea, CheckboxInput
 
@@ -23,32 +20,8 @@ __all__ = (
 )
 
 
-class JustSelectedSelect(Select):
+class JustSelectedMixin(object):
     """ only generate selected option """
-
-    def render_options(self, choices, selected_choices):
-        # Normalize to strings.
-        # FIXME selected value couldn't be ‘’ None
-        selected_choices = set([force_text(v) for v in selected_choices if v])
-        output = []
-        schoices = self.choices
-        if isinstance(schoices, ModelChoiceIterator):
-            schoices.queryset = schoices.queryset.filter(pk__in=selected_choices)
-        if isinstance(choices, ModelChoiceIterator):
-            choices.queryset = choices.queryset.filter(pk__in=selected_choices)
-        for option_value, option_label in chain(schoices, choices):
-            if isinstance(option_label, (list, tuple)):
-                output.append(u'<optgroup label="%s">' % escape(force_text(option_value)))
-                for option in option_label:
-                    if not force_text([0]) in selected_choices:
-                        continue
-                    output.append(self.render_option(selected_choices, *option))
-                output.append(u'</optgroup>')
-            else:
-                if not force_text(option_value) in selected_choices:
-                    continue
-                output.append(self.render_option(selected_choices, option_value, option_label))
-        return u'\n'.join(output)
 
     def render_readonly(self, name, value, attrs):
         schoices = self.choices
@@ -62,39 +35,37 @@ class JustSelectedSelect(Select):
                 return o[1]
         return ""
 
+    def get_only_selected_choices(self, value):
+        """Return a list of optgroups for this widget."""
+        schoices = self.choices
+        selected_choices = set([force_text(v) for v in value if v])
+        if isinstance(schoices, ModelChoiceIterator):
+            schoices.queryset = schoices.queryset.filter(pk__in=selected_choices)
+        else:
+            schoices = [e for e in schoices if force_text(e) in selected_choices]
+        return schoices
 
-class JustSelectedSelectMultiple(JustSelectedSelect):
+
+class JustSelectedSelect(JustSelectedMixin, Select):
+    def optgroups(self, name, value, attrs=None):
+        self.choices = self.get_only_selected_choices(value)
+        return super(JustSelectedSelect, self).optgroups(name, value, attrs)
+
+    def render_options(self, selected_choices):
+        self.choices = self.get_only_selected_choices(selected_choices)
+        return super(JustSelectedSelect, self).render_options(selected_choices)
+
+
+class JustSelectedSelectMultiple(JustSelectedMixin, SelectMultiple):
     """ only generate selected option """
 
-    def render(self, name, value, attrs=None, choices=()):
-        if value is None:
-            value = []
-        final_attrs = self.build_attrs(attrs, name=name)
-        output = [u'<select multiple="multiple"%s>' % flatatt(final_attrs)]
-        options = self.render_options(choices, value)
-        if options:
-            output.append(options)
-        output.append('</select>')
-        return mark_safe(u'\n'.join(output))
+    def optgroups(self, name, value, attrs=None):
+        self.choices = self.get_only_selected_choices(value)
+        return super(JustSelectedSelectMultiple, self).optgroups(name, value, attrs)
 
-    def value_from_datadict(self, data, files, name):
-        cls_tuple = (MultiValueDict, )
-        if django.VERSION < (1, 9):
-            cls_tuple = (MultiValueDict, MergeDict, )
-        if isinstance(data, cls_tuple):
-            return data.getlist(name)
-        return data.get(name, None)
-
-    def _has_changed(self, initial, data):
-        if initial is None:
-            initial = []
-        if data is None:
-            data = []
-        if len(initial) != len(data):
-            return True
-        initial_set = set([force_text(value) for value in initial])
-        data_set = set([force_text(value) for value in data])
-        return data_set != initial_set
+    def render_options(self, selected_choices):
+        self.choices = self.get_only_selected_choices(selected_choices)
+        return super(JustSelectedSelectMultiple, self).render_options(selected_choices)
 
 
 def render_hidden(name, value):
