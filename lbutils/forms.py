@@ -1,12 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django import forms
 from django.forms.formsets import BaseFormSet
-from django.forms.models import BaseModelFormSet
-from django.forms.models import BaseInlineFormSet
+from django.forms.models import BaseInlineFormSet, BaseModelFormSet
 from django.utils.encoding import force_text
 from django.utils.translation import ugettext_lazy as _
+
+from .widgets import JustSelectedSelectMultiple, TextWidget
 
 try:
     from crispy_forms.bootstrap import PrependedText
@@ -16,9 +14,6 @@ try:
     from crispy_forms.layout import Div
 except ImportError:
     pass
-
-from .widgets import JustSelectedSelectMultiple
-from .widgets import TextWidget
 
 
 __all__ = (

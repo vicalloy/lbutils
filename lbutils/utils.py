@@ -1,10 +1,8 @@
-from __future__ import unicode_literals
-
-import math
 import importlib
-from django.template.defaultfilters import floatformat
-from django.contrib.humanize.templatetags.humanize import intcomma
+import math
 
+from django.contrib.humanize.templatetags.humanize import intcomma
+from django.template.defaultfilters import floatformat
 
 __all__ = (
     'safe_eval', 'fmt_num', 'as_callable', 'create_instance',

@@ -1,5 +1,6 @@
 import os
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 
 def long_desc(root_path):
@@ -20,6 +21,7 @@ def get_version(root_path):
         for line in f:
             if line.startswith('__version__ ='):
                 return line.split('=')[1].strip().strip('"\'')
+
 
 setup(
     name='django-lbutils',
@@ -55,7 +57,7 @@ setup(
         'Framework :: Django',
     ],
     zip_safe=False,
-    tests_require=["Django>=1.6.0"],
+    tests_require=["Django>=1.6.0", "django-crispy-forms>1.4", "xlsxwriter>0.8"],
     test_suite='runtests.runtests',
     package_data={
         'lbutils': [

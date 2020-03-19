@@ -1,34 +1,16 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-
 from unittest import skipUnless
+
 import django
 from django.http import QueryDict
 from django.test import TestCase
+from lbutils import (QuickSearchForm, create_instance, do_filter, fmt_month,
+                     fmt_num, format_filesize, forms_is_valid, get_max,
+                     get_or_none, get_pk_or_none, get_sum, get_year_choices,
+                     qdict_get_list, render_json, simple_export2xlsx)
+from lbutils.templatetags.lbutils import display_array, get_setting
 
-from lbutils import fmt_month
-from lbutils import get_year_choices
-from lbutils import fmt_num
-from lbutils import create_instance
-from lbutils import get_or_none
-from lbutils import get_pk_or_none
-from lbutils import get_sum
-from lbutils import get_max
-from lbutils import do_filter
-from lbutils import QuickSearchForm
-from lbutils import forms_is_valid
-from lbutils import render_json
-from lbutils import qdict_get_list
-from lbutils import simple_export2xlsx
-from lbutils import format_filesize
-from lbutils.templatetags.lbutils import display_array
-from lbutils.templatetags.lbutils import get_setting
-
-from .models import Book
-from .models import Category
-from .models import Author
 from .forms import BookForm
+from .models import Author, Book, Category
 
 
 class DateUtilsTests(TestCase):
@@ -67,7 +49,7 @@ def create_books():
         category=category, name='book-01',
         price=100,
         descn='descn')
-    book.authors = [author1, author2]
+    book.authors.set([author1, author2])
     Book.objects.create(
         category=category, name='book-02',
         price=200,
@@ -161,7 +143,6 @@ class FormTests(TestCase):
         self.edit_form = BookForm(
             instance=Book.objects.get(name='book-01'))
 
-    @skipUnless(django.VERSION < (1, 10, 0), "crispy_forms not support Django 1.10")
     def test_quicksearchform(self):
         from crispy_forms.templatetags.crispy_forms_filters import as_crispy_form
         data = {'q_quick_search_kw': 'keyword'}

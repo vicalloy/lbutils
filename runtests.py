@@ -1,10 +1,9 @@
 #!/usr/bin/env python
-import sys
 import os
+import sys
 
-from django.conf import settings
 import django
-
+from django.conf import settings
 
 DEFAULT_SETTINGS = dict(
     INSTALLED_APPS=(
@@ -12,12 +11,28 @@ DEFAULT_SETTINGS = dict(
         'lbutils',
         'lbutils.tests',
     ),
+    TEMPLATES=[
+        {
+            'BACKEND': 'django.template.backends.django.DjangoTemplates',
+            'DIRS': [],
+            'APP_DIRS': True,
+            'OPTIONS': {
+                'context_processors': [
+                    'django.template.context_processors.debug',
+                    'django.template.context_processors.request',
+                    'django.contrib.auth.context_processors.auth',
+                    'django.contrib.messages.context_processors.messages',
+                ],
+            },
+        },
+    ],
     DATABASES={
         "default": {
             "ENGINE": "django.db.backends.sqlite3"
         }
     },
     GET_SETTING='ABC',
+    CRISPY_TEMPLATE_PACK='bootstrap3',
     SILENCED_SYSTEM_CHECKS=[],
 )
 

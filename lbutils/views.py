@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import json
+
 from django.http import HttpResponse
 
 try:
@@ -91,7 +89,6 @@ def create_formset(
         formset_class, prefix,
         template_prefix=None, **kwargs):
     helper = FormHelper()
-    project_name = ''
     template = 'bootstrap3/table_inline_formset.html'
     if template_prefix:
         template = "%s/%s" % (template_prefix, template)

@@ -1,10 +1,8 @@
-from __future__ import unicode_literals
-
-
 import codecs
 from datetime import datetime
+from io import BytesIO
+
 from django.http import HttpResponse
-from django.utils.six import BytesIO
 
 try:
     import xlsxwriter as xlwt

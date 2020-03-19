@@ -1,19 +1,8 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from itertools import chain
-import django
-from django.utils.encoding import force_text
+from django.forms import (HiddenInput, MultipleHiddenInput, Select,
+                          SelectMultiple)
 from django.forms.models import ModelChoiceIterator
-from django.utils.html import escape
-try:
-    from django.forms.util import flatatt
-except ImportError:  # Django >= 1.9
-    from django.forms.utils import flatatt
-from django.forms import Select
-from django.forms import SelectMultiple
-from django.forms import MultipleHiddenInput, HiddenInput
-from django.forms.widgets import Widget, Textarea, CheckboxInput
+from django.forms.widgets import CheckboxInput, Textarea, Widget
+from django.utils.encoding import force_text
 
 __all__ = (
     'JustSelectedSelect', 'JustSelectedSelectMultiple', 'TextWidget',
@@ -88,7 +77,7 @@ class TextWidget(Widget):
     def value_from_datadict(self, data, files, name):
         return self.src_widget.value_from_datadict(data, files, name)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         func_render_readonly = getattr(self.src_widget, 'render_readonly', None)
         if func_render_readonly:
             descn = func_render_readonly(name, value, attrs)

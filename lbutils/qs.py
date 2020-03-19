@@ -1,11 +1,4 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from django.utils import six
-from django.db.models import Q, F
-from django.db.models import Sum
-from django.db.models import Max
-
+from django.db.models import F, Max, Q, Sum
 
 __all__ = (
     'get_or_none', 'get_pk_or_none', 'get_sum',
@@ -92,7 +85,7 @@ def __gen_query_params(qdata):
     for k, v in qdata.items():
         if k.startswith('q__'):
             k = k[3:]
-            if not isinstance(v, six.text_type):
+            if not isinstance(v, str):
                 if v is not None:
                     kw_query_params[k] = v
                 continue
@@ -110,7 +103,7 @@ def __gen_query_params(qdata):
                     tmp_q = tmp_q | Q(**{k: o})
                 q = q & tmp_q
                 continue
-            if isinstance(v, six.text_type):
+            if isinstance(v, str):
                 v = {'__True': True, '__False': False}.get(v, v)
             kw_query_params[k] = v
     return q, kw_query_params

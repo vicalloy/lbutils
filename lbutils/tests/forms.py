@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django import forms
+from lbutils import (BootstrapFormHelperMixin, JustSelectedSelect,
+                     JustSelectedSelectMultiple)
 
-from lbutils import BootstrapFormHelperMixin
-from lbutils import JustSelectedSelect
-from lbutils import JustSelectedSelectMultiple
 from .models import Book
 
 
